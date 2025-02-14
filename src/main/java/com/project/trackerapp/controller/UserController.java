@@ -1,7 +1,9 @@
 package com.project.trackerapp.controller;
 
+import com.project.trackerapp.exception.UserAlreadyExistsException;
 import com.project.trackerapp.repository.UserRepository;
 import com.project.trackerapp.service.UserDetailsServiceImpl;
+import com.project.trackerapp.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -30,8 +32,9 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 
 @Controller
 public class UserController {
+
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -55,18 +58,20 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute("user") User user, BindingResult result, Model model, HttpServletRequest request){
-        if(userRepository.findByUsername(user.getUsername()) != null){
-            model.addAttribute("error", "This user already exists.");
-            return "register";
-        }
-
+    public String register(@Valid @ModelAttribute("user") User user,
+                           BindingResult result,
+                           Model model) {
         if (result.hasErrors()) {
             return "register";
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        try {
+            userService.registerUser(user);
+        } catch (UserAlreadyExistsException e) {
+            model.addAttribute("error", e.getMessage());
+            return "register";
+        }
+
         return "redirect:/login";
     }
 

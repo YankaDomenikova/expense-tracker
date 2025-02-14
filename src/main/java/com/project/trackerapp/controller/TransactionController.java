@@ -62,18 +62,20 @@ public class TransactionController {
 
 
     @PostMapping("/transaction/save")
-    public String save(@Valid @ModelAttribute ("transaction") Transaction transaction, BindingResult result, Model model, Principal principal){
-        if(result.hasErrors()){
+    public String save(@Valid @ModelAttribute("transaction") Transaction transaction, BindingResult result, Model model, Principal principal) {
+        if (result.hasErrors()) {
             model.addAttribute("user", userService.getCurrentUser(principal));
             model.addAttribute("expenses", categoryRepository.findByCategoryType("Expense"));
             model.addAttribute("income", categoryRepository.findByCategoryType("Income"));
             return "add_transaction";
         }
 
-        transaction.setUser(userService.getCurrentUser(principal));
-        transactionRepository.save(transaction);
+        User currentUser = userService.getCurrentUser(principal);
+        transactionService.saveTransaction(transaction, currentUser);
+
         return "redirect:/dashboard";
     }
+
 
     @GetMapping("/transaction/edit/{id}")
     public String edit(@PathVariable("id") long id, Model model, Principal principal){

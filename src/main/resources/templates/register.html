@@ -11,12 +11,11 @@
 
   <img src="./icons/logo.svg" alt="" class="logo">
 
-
-  <div class="container auth-container">
-    <p th:if="${error}"  th:text="${error}" class="error-text mb-3"></p>
+  <div class="container content auth-content">
+    <p th:if="${error}"  th:text="${error}" class="error-message"></p>
 
     <form action="#" th:action="@{/register}" th:object="${user}" class="auth-form" method="post">
-      <h4 class="page-heading mb-5">Register</h4>
+      <h4 class="page-heading">Register</h4>
 
       <div class="input-wrapper">
         <input type="email" th:field="*{email}" name="email" placeholder="Email" class="input">
@@ -39,7 +38,7 @@
         <img src="./icons/eye-open-2.svg" alt="" id="eye-icon">
       </div>
 
-          <input type="submit" class="auth-btn" value="Create account">
+          <input type="submit" class="button-main" value="Create account">
 
       <p class="auth-link">Have an account? <a th:href="@{/login}">Log in</a></p>
     </form>
